@@ -33,122 +33,62 @@ if [[ -f "$PROJECT_FILE" ]]; then
   exit 0
 fi
 
-# PLACEHOLDER: Replace with actual LLM API call
-# Example integration:
-# PROMPT=$(cat "$REPO_ROOT/prompts/meta-prompt.md")
-# RESPONSE=$(curl -s -X POST https://api.openai.com/v1/chat/completions \
-#   -H "Authorization: Bearer $OPENAI_API_KEY" \
-#   -d "{\"model\": \"gpt-4\", \"messages\": [{\"role\": \"user\", \"content\": \"$PROMPT\"}]}")
-# CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
+# Perplexity API Integration
+log "Reading meta-prompt..."
+PROMPT=$(cat "$REPO_ROOT/prompts/meta-prompt.md")
 
-# For now, generate a template project
-log "Generating project template..."
+# Check for API key
+if [[ -z "$PERPLEXITY_API_KEY" ]]; then
+  log "❌ PERPLEXITY_API_KEY not set. Exiting."
+  exit 1
+fi
 
-cat > "$PROJECT_FILE" << 'EOF'
-# AI/SRE Project - $DATE
+log "Calling Perplexity API..."
 
-## Project Title
-[Your Project Title]
+# Call Perplexity API with streaming disabled for easier JSON parsing
+RESPONSE=$(curl -s -X POST "https://api.perplexity.ai/chat/completions" \
+  -H "Authorization: Bearer $PERPLEXITY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d @- << CURL_EOF
+{
+  "model": "sonar",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an expert SRE and AI infrastructure engineer. Generate a production-ready project idea in markdown format with all sections requested."
+    },
+    {
+      "role": "user",
+      "content": "$PROMPT\n\nGenerate a new AI/SRE project for $(date +%Y-%m-%d). Output ONLY the markdown content, starting with '# AI/SRE Project'. Include all sections: Problem Statement, Architecture, Implementation Steps, Code Skeleton, Metrics, Observability, Failure Analysis, and Next Steps."
+    }
+  ],
+  "max_tokens": 2000,
+  "temperature": 0.7,
+  "stream": false
+}
+CURL_EOF
+)
 
-## Problem Statement
-**Real-world challenge**: [What production problem does this solve?]
+# Extract content from response
+CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content' 2>/dev/null)
 
-**Why it matters**: [Business/operational impact]
+if [[ -z "$CONTENT" ]] || [[ "$CONTENT" == "null" ]]; then
+  log "❌ Failed to get response from Perplexity API"
+  log "Response: $RESPONSE"
+  exit 1
+fi
 
-## Architecture
+log "✅ Generated content from Perplexity API"
 
-```
-Component A → Component B → Component C
-     ↓            ↓              ↓
-[Brief description of each]
-```
-
-## Implementation Steps
-
-### Phase 1: MVP (Days 1-2)
-- [ ] Define requirements
-- [ ] Design core components
-- [ ] Implement basic functionality
-
-### Phase 2: Reliability (Days 3-4)
-- [ ] Add error handling
-- [ ] Implement retry logic
-- [ ] Add circuit breakers
-
-### Phase 3: Observability (Days 5-6)
-- [ ] Add structured logging
-- [ ] Implement metrics collection
-- [ ] Create alerts & dashboards
-
-### Phase 4: Polish (Day 7)
-- [ ] Code cleanup
-- [ ] Documentation
-- [ ] Deploy to production
-
-## Minimal Code Skeleton
-
-```python
-# Core implementation stub
-class ProjectName:
-    def __init__(self):
-        self.logger = get_logger(__name__)
-    
-    def execute(self):
-        """Main execution logic"""
-        try:
-            result = self.process()
-            self.log_metrics(result)
-            return result
-        except Exception as e:
-            self.handle_error(e)
-            raise
-
-    def process(self):
-        """TODO: Implement core logic"""
-        pass
-
-    def handle_error(self, error):
-        """Failure mode handling"""
-        self.logger.error(f"Error occurred: {error}")
-        # Implement remediation logic
-```
-
-## Metrics of Success
-
-| Metric | Target | Rationale |
-|--------|--------|-----------|
-| Deployment time | < 5 min | Should be quick to iterate |
-| MTTR (Mean Time To Recovery) | < 2 min | Auto-remediation reduces incident time |
-| Cost reduction | > 15% | Resource efficiency wins |
-| Error rate | < 0.1% | High reliability threshold |
-
-## Observability Design
-
-**Logs**: Structured JSON with request IDs for tracing
-**Metrics**: Counter, histogram, gauge for key operations
-**Traces**: Distributed tracing for request path visibility
-**Alerts**: Threshold-based + anomaly detection
-
-## Failure Mode Analysis
-
-| Failure Mode | Impact | Mitigation |
-|--------------|--------|-----------|
-| [Common failure] | [Severity] | [Recovery strategy] |
-| [Common failure] | [Severity] | [Recovery strategy] |
-
-## Next Steps
-
-1. Implement Phase 1 MVP
-2. Set up monitoring & alerting
-3. Run failure mode tests
-4. Document lessons learned
-5. Publish results
+# Write the generated content to project file
+cat > "$PROJECT_FILE" << EOF
+$CONTENT
 
 ---
 
-**Tags**: `#SRE` `#AI` `#Observability` `#Scaling` `#Infrastructure`
+**Generated**: $(date)
+**Tags**: #SRE #AI #Observability #Scaling #LLMInfra
 EOF
-
 log "✅ Project template created at: $PROJECT_FILE"
 
 # Run git operations
