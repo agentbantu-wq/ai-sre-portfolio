@@ -1,0 +1,14 @@
+[Unit]
+Description=Daily AI/SRE Project Generation Timer
+Documentation=https://github.com/agentbantu-wq/ai-sre-portfolio
+Requires=ai-sre-daily.service
+
+[Timer]
+# Run daily at 9 AM UTC
+OnCalendar=*-*-* 09:00:00 UTC
+
+# Run on boot if missed
+Persistent=true
+
+[Install]
+WantedBy=timers.target

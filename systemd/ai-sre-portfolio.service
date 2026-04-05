@@ -1,0 +1,25 @@
+[Unit]
+Description=AI/SRE Portfolio Generator Service
+Documentation=https://github.com/agentbantu-wq/ai-sre-portfolio
+After=network.target
+
+[Service]
+Type=oneshot
+User=%u
+WorkingDirectory=%h/VSCode/ai-sre-portfolio
+EnvironmentFile=%h/VSCode/ai-sre-portfolio/.env
+
+# Run the complete pipeline
+ExecStart=/usr/bin/bash -c 'source %h/VSCode/ai-sre-portfolio/.env && /usr/bin/python3 /home/%u/VSCode/ai-sre-portfolio/scripts/extract_problems.py'
+ExecStartPost=/usr/bin/bash -c 'source %h/VSCode/ai-sre-portfolio/.env && /usr/bin/python3 /home/%u/VSCode/ai-sre-portfolio/scripts/generate_tools.py'
+ExecStartPost=/usr/bin/bash -c 'source %h/VSCode/ai-sre-portfolio/.env && /home/%u/VSCode/ai-sre-portfolio/scripts/generate.sh'
+
+StandardOutput=journal
+StandardError=journal
+
+# Restart on failure
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=default.target

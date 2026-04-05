@@ -1,0 +1,17 @@
+[Unit]
+Description=Weekly AI/SRE Portfolio Generation Timer
+Documentation=https://github.com/agentbantu-wq/ai-sre-portfolio
+Requires=ai-sre-portfolio.service
+
+[Timer]
+# Run every Sunday at 2 AM
+OnCalendar=Sun *-*-* 02:00:00
+
+# Run on boot if missed
+Persistent=true
+
+# Run immediately on enable (for first test)
+OnBootSec=5min
+
+[Install]
+WantedBy=timers.target

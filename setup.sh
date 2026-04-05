@@ -53,35 +53,69 @@ else
   exit 1
 fi
 
-# 4. Cron setup
+# 4. Make scripts executable
 echo ""
-echo "3️⃣  Cron Automation Setup"
-echo "   Run daily project generation at 9 AM UTC"
-echo ""
-read -p "Do you want to set up daily cron job? (y/n) " SETUP_CRON
+echo "3️⃣  Making scripts executable..."
+chmod +x "$REPO_ROOT/scripts/generate.sh"
+chmod +x "$REPO_ROOT/scripts/extract_problems.py"
+chmod +x "$REPO_ROOT/scripts/generate_tools.py"
+chmod +x "$REPO_ROOT/setup.sh"
+echo "✅ Scripts are executable"
 
-if [[ "$SETUP_CRON" == "y" ]]; then
+# 5. Install systemd services (primary automation)
+echo ""
+echo "4️⃣  Installing systemd services..."
+mkdir -p "$HOME/.config/systemd/user"
+
+# Copy service files
+cp "$REPO_ROOT/systemd/ai-sre-portfolio.service" "$HOME/.config/systemd/user/"
+cp "$REPO_ROOT/systemd/ai-sre-portfolio.timer" "$HOME/.config/systemd/user/"
+cp "$REPO_ROOT/systemd/ai-sre-daily.service" "$HOME/.config/systemd/user/"
+cp "$REPO_ROOT/systemd/ai-sre-daily.timer" "$HOME/.config/systemd/user/"
+
+# Reload systemd
+systemctl --user daemon-reload
+
+echo "✅ Systemd services installed:"
+echo "   • Daily project generation: ai-sre-daily.timer (9 AM UTC)"
+echo "   • Weekly problem extraction: ai-sre-portfolio.timer (Sunday 2 AM UTC)"
+
+# 6. Enable systemd timers (primary)
+echo ""
+echo "5️⃣  Automation Setup"
+read -p "Enable systemd timers for automation? (y/n) " ENABLE_SYSTEMD
+
+if [[ "$ENABLE_SYSTEMD" == "y" ]]; then
+  systemctl --user enable ai-sre-daily.timer
+  systemctl --user enable ai-sre-portfolio.timer
+  systemctl --user start ai-sre-daily.timer
+  systemctl --user start ai-sre-portfolio.timer
+  echo "✅ Systemd timers enabled and started"
+  
+  # Optional: remove old cron job
+  if crontab -l 2>/dev/null | grep -q "scripts/generate.sh"; then
+    read -p "Remove old cron job? (y/n) " REMOVE_CRON
+    if [[ "$REMOVE_CRON" == "y" ]]; then
+      (crontab -l | grep -v "scripts/generate.sh") | crontab -
+      echo "✅ Removed old cron job"
+    fi
+  fi
+else
+  # Fallback to cron
+  echo "⚠️  Using legacy cron automation"
   CRON_JOB="0 9 * * * source $REPO_ROOT/.env && $REPO_ROOT/scripts/generate.sh >> $REPO_ROOT/logs/cron.log 2>&1"
   
-  # Check if cron job already exists
   if crontab -l 2>/dev/null | grep -q "scripts/generate.sh"; then
     echo "⚠️  Cron job already exists. Skipping..."
   else
     (crontab -l 2>/dev/null; echo "$CRON_JOB") | crontab -
-    echo "✅ Cron job installed!"
+    echo "✅ Cron job installed (daily at 9 AM UTC)"
   fi
 fi
 
-# 5. Make scripts executable
+# 7. Manual test
 echo ""
-echo "4️⃣  Making scripts executable..."
-chmod +x "$REPO_ROOT/scripts/generate.sh"
-chmod +x "$REPO_ROOT/setup.sh"
-echo "✅ Scripts are executable"
-
-# 6. Manual test
-echo ""
-echo "5️⃣  Manual Test (generating first project)"
+echo "6️⃣  Manual Test (optional)"
 read -p "Run first generation now? (y/n) " RUN_NOW
 
 if [[ "$RUN_NOW" == "y" ]]; then
@@ -94,11 +128,21 @@ echo "=========================================="
 echo "✅ Setup Complete!"
 echo "=========================================="
 echo ""
-echo "📋 Next Steps:"
-echo "  1. Add remote: git remote add origin <your-github-repo>"
-echo "  2. Push: git push -u origin main"
-echo "  3. Check logs: tail -f logs/cron.log"
-echo "  4. Manual run: ./scripts/generate.sh"
+echo "📋 Git Configuration:"
+echo "  1. git remote add origin <your-github-repo>"
+echo "  2. git push -u origin main"
 echo ""
-echo "💡 Cron will run daily at 9 AM UTC"
+echo "📋 Systemd Commands (if enabled):"
+echo "  • Check status: systemctl --user status ai-sre-daily.timer"
+echo "  • View logs: journalctl --user -u ai-sre-daily.service -f"
+echo "  • Disable timer: systemctl --user stop ai-sre-daily.timer"
+echo ""
+echo "📋 Manual Run:"
+echo "  • Generate project: ./scripts/generate.sh"
+echo "  • Extract problems: python3 scripts/extract_problems.py"
+echo "  • Generate tools: python3 scripts/generate_tools.py"
+echo ""
+echo "🎯 Automation Schedule:"
+echo "  • Daily: Project generation at 9 AM UTC"
+echo "  • Weekly: Problem extraction + tool generation at 2 AM UTC Sunday"
 echo ""
