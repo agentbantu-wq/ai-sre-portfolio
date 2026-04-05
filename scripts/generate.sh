@@ -15,6 +15,13 @@ DATE=$(date +"%Y-%m-%d")
 LOG_FILE="$LOGS_DIR/generate_${DATE}.log"
 PROJECT_FILE="$PROJECTS_DIR/project_${DATE}.md"
 
+# Source .env if it exists
+if [[ -f "$REPO_ROOT/.env" ]]; then
+  set -a
+  source "$REPO_ROOT/.env"
+  set +a
+fi
+
 # Ensure directories exist
 mkdir -p "$PROJECTS_DIR" "$LOGS_DIR"
 
