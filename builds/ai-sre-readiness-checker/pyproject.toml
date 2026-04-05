@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-sre-readiness-checker"
+version = "0.1.0"
+description = "Evaluate AI SRE tools for production readiness"
+authors = [{name = "AI/SRE Portfolio", email = "portfolio@example.com"}]
+license = {text = "MIT"}
+requires-python = ">=3.8"
+dependencies = [
+    "click>=8.0",
+    "pyyaml>=5.4",
+    "pandas>=1.0",
+    "jinja2>=3.0",
+    "rich>=10.0",
+    "tabulate>=0.8"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "black>=21.0",
+    "flake8>=3.9",
+    "mypy>=0.900"
+]
+
+[project.scripts]
+ai-sre-readiness = "src.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+where = ["."][tool.setuptools.packages.find]ai-sre-readiness = "src.cli:main"[project.scripts]]    "mypy>=0.900"    "flake8>=3.9",    "black>=21.0",    "pytest>=6.0",dev = [[project.optional-dependencies]]    "tabulate>=0.8"    "rich>=10.0",    "jinja2>=3.0",    "pandas>=1.0",    "pyyaml>=5.4",    "click>=8.0",dependencies = [requires-python = ">=3.8"license = {text = "MIT"}authors = [{name = "AI/SRE Portfolio", email = "portfolio@example.com"}]description = "Evaluate AI SRE tools for production readiness"version = "0.1.0"name = "ai-sre-readiness-checker"[project]build-backend = "setuptools.build_meta"requires = ["setuptools>=45", "wheel"]

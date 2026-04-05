@@ -1,0 +1,71 @@
+# Default production-ready checklist for AI SRE tools
+
+context:
+  - name: Accesses metrics
+    description: Can pull metrics from monitoring system (Prometheus, DataDog, New Relic, etc.)
+    weight: 2
+  - name: Accesses logs
+    description: Can search and retrieve logs from centralized logging
+    weight: 2
+  - name: Accesses traces
+    description: Can access distributed traces for request flow analysis
+    weight: 2
+  - name: Access to runbooks
+    description: Can fetch and reference typed runbooks/playbooks
+    weight: 1
+  - name: Baseline awareness
+    description: Establishes baseline of normal behavior before alerting
+    weight: 1
+
+investigation:
+  - name: Correlates logs+metrics
+    description: Finds relationships between different signal types
+    weight: 2
+  - name: Identifies patterns
+    description: Can spot recurring anomalies and patterns
+    weight: 2
+  - name: Root cause analysis
+    description: Points to likely root cause with reasoning
+    weight: 2
+  - name: Confidence scoring
+    description: Provides confidence level (low/medium/high) on findings
+    weight: 1
+
+actionability:
+  - name: Dry-run support
+    description: Can test proposed fixes without applying them
+    weight: 2
+  - name: Auto-remediation
+    description: Can execute fixes autonomously with approval
+    weight: 2
+  - name: Suggests remediation
+    description: Recommends specific, actionable remediation steps
+    weight: 2
+  - name: Change window aware
+    description: Won't execute changes outside maintenance windows
+    weight: 1
+
+safety:
+  - name: Audit logging
+    description: Records all decisions and actions with timestamps
+    weight: 2
+  - name: Configurable guardrails
+    description: Has limits on scope (no critical resources without approval)
+    weight: 2
+  - name: Approval workflows
+    description: Can require human approval before executing changes
+    weight: 2
+  - name: Rate limiting
+    description: Prevents action spam and thundering herd
+    weight: 1
+
+efficiency:
+  - name: Response latency
+    description: Responds to alerts in < 10 seconds
+    weight: 2
+  - name: Resource overhead
+    description: Uses < 5% CPU/memory of target system
+    weight: 2
+  - name: Scales linearly
+    description: Performance maintains as incident volume grows
+    weight: 1

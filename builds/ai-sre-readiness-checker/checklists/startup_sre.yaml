@@ -1,0 +1,29 @@
+# Simplified checklist for small SRE teams (< 50 people)
+
+context:
+  - name: Access to alerts/logs
+    description: Can retrieve alert context and recent logs
+  - name: Knows normal baseline
+    description: Understands what "normal" looks like for your stack
+
+investigation:
+  - name: Can correlate signals
+    description: Connects logs/metrics to understand incident
+  - name: Points to likely cause
+    description: Suggests what's probably wrong
+
+actionability:
+  - name: Suggests fixes
+    description: Recommends specific next steps
+  - name: Can execute simple remediation
+    description: Can run standard runbooks (restart services, etc.)
+
+safety:
+  - name: Has off-switch
+    description: Can be disabled immediately
+  - name: Requires human decision
+    description: Needs approval before major changes
+
+efficiency:
+  - name: Fast (under 10s)
+    description: Doesn't add significant latency
