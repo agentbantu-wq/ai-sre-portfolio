@@ -107,8 +107,8 @@ git add "$PROJECT_FILE"
 log "Committing..."
 git commit -m "add: project for $DATE" || log "⚠️  Nothing new to commit"
 
-log "Attempting push (requires origin remote)..."
-git push origin main 2>/dev/null || log "⚠️  No remote configured or push failed"
+log "Attempting push to GitHub..."
+git push origin main 2>&1 | tee -a "$LOG_FILE" || log "⚠️  Push failed. Check network or GitHub credentials."
 
 log "=========================================="
 log "✅ Generation complete!"
