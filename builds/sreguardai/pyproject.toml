@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sreguardai"
+version = "1.0.0"
+description = "Self-hosted AI gateway for SRE teams"
+authors = [{name = "AI/SRE Portfolio"}]
+dependencies = [
+    "fastapi==0.104.1",
+    "uvicorn==0.24.0",
+    "pydantic==2.5.0",
+    "requests==2.31.0"
+]
+requires-python = ">=3.9"
+
+[project.scripts]
+sreguardai = "cli_client:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
