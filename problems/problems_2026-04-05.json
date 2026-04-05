@@ -1,0 +1,40 @@
+{
+  "timestamp": "2026-04-05T11:10:51.721216",
+  "problems": [
+    {
+      "problem_title": "Overreliance on AI Tools in SRE Due to Lack of Production Readiness",
+      "description": "SRE teams spend years desiring AI-driven automation but face long development cycles and unproven reliability when building with AI, as highlighted by extended timelines from desire to deployment.",
+      "why_it_matters": "Delays in AI adoption hinder operational efficiency, increase manual toil, and prevent scaling of incident response and automation efforts critical for SRE goals.",
+      "solution_category": "incident automation",
+      "severity": "HIGH"
+    },
+    {
+      "problem_title": "Vendor Legal Restrictions Limiting AI Usage in Production Environments",
+      "description": "Tools like Microsoft Copilot are contractually limited to 'entertainment purposes only,' prohibiting their use for serious SRE workflows despite marketing as productivity enhancers.",
+      "why_it_matters": "Blocks adoption of AI for critical tasks like troubleshooting and alerting, exposing businesses to compliance risks, wasted investments, and sustained high MTTR.",
+      "solution_category": "observability",
+      "severity": "HIGH"
+    },
+    {
+      "problem_title": "Critical Security Breaches from Vendor Data Leaks",
+      "description": "Third-party services like BrowserStack suffer leaks of sensitive user data such as email addresses, compromising SRE teams' testing infrastructures.",
+      "why_it_matters": "Exposes organizations to phishing, account takeovers, and regulatory violations, eroding trust in external tools essential for CI/CD and testing pipelines.",
+      "solution_category": "security compliance",
+      "severity": "HIGH"
+    },
+    {
+      "problem_title": "Protracted Development Cycles for AI-Enabled SRE Solutions",
+      "description": "Despite high demand, transitioning from ideation to functional AI tools in SRE takes months, indicating gaps in rapid prototyping and integration frameworks.",
+      "why_it_matters": "Slows innovation in reliability engineering, leading to persistent toil, higher costs, and competitive disadvantages in fast-paced DevOps landscapes.",
+      "solution_category": "incident automation",
+      "severity": "MEDIUM"
+    },
+    {
+      "problem_title": "Insufficient Vendor Accountability for SRE Tool Reliability",
+      "description": "SRE practitioners encounter disclaimers that undermine tool utility for production use, fostering skepticism toward commercial AI and testing platforms.",
+      "why_it_matters": "Increases evaluation overhead and risk assessment time, potentially diverting resources from core reliability work and inflating operational expenses.",
+      "solution_category": "cost optimization",
+      "severity": "MEDIUM"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "tool_name": "AI-SRE-Readiness-Checker",
+  "description": "A lightweight evaluation framework that assesses AI SRE tools for production readiness using the five agentic pillars (context, investigation, actionability, safety, efficiency), enabling teams to validate tools quickly before long development cycles.",
+  "core_features": [
+    "Run configurable checklists against AI SRE tools based on production pillars from industry benchmarks.",
+    "Score tools on key metrics like MTTR reduction potential, context integration, and safety guardrails.",
+    "Generate reports with pass/fail criteria and recommendations to avoid brittle demos.",
+    "Simulate basic incident scenarios to test tool actionability without full production setup."
+  ],
+  "tech_stack": {
+    "language": "Python",
+    "frameworks": [
+      "Click (CLI)",
+      "Pandas (data handling)",
+      "Jinja2 (report templating)",
+      "Rich (console output)"
+    ]
+  },
+  "mvp_scope": "3-day MVP: CLI tool with YAML-configurable checklists for the 5 pillars; input tool name/URLs/docs; output scored report (0-100 readiness score) with pass/fail on 20 core criteria; basic scenario tester using mock alert data; no real integrations.",
+  "success_metric": "Achieves 80%+ accuracy matching expert evaluations (validated against [1][3] benchmarks) on 10 sample AI SRE tools; reduces evaluation time from weeks to <1 hour per tool (user feedback from SRE teams).",
+  "repo_structure": {
+    "folders": [
+      "src/checker/",
+      "scenarios/",
+      "templates/",
+      "tests/",
+      "docs/"
+    ],
+    "key_files": [
+      "pyproject.toml",
+      "src/checker/main.py (CLI entrypoint)",
+      "src/checker/pillars.py (evaluation logic)",
+      "scenarios/mock_incidents.yaml",
+      "templates/report.j2",
+      "README.md",
+      "checklists/production_ready.yaml"
+    ]
+  },
+  "source_problem": "Overreliance on AI Tools in SRE Due to Lack of Production Readiness"
+}

@@ -1,0 +1,42 @@
+{
+  "tool_name": "SREGuardAI",
+  "description": "A minimal, self-hosted AI gateway for SRE teams that proxies prompts to open, compliant LLMs, ensuring no vendor legal restrictions by avoiding proprietary tools like Copilot in production workflows.",
+  "core_features": [
+    "Proxy SRE-specific prompts (e.g., incident analysis, runbook generation) to open LLMs like Llama or Mistral via local Ollama.",
+    "Log all inputs/outputs for audit trails and compliance verification.",
+    "Simple CLI interface for quick integration into SRE scripts and terminals.",
+    "Configurable model selection and safety filters to mimic enterprise protections without vendor dependencies."
+  ],
+  "tech_stack": {
+    "language": "Python",
+    "frameworks": [
+      "FastAPI",
+      "Ollama (client)",
+      "Pydantic"
+    ]
+  },
+  "mvp_scope": "3-day build: (1) FastAPI server with /generate endpoint accepting SRE prompts, routing to local Ollama (Llama 3.1); (2) Basic logging to SQLite; (3) CLI client using requests; (4) Docker container for easy deployment; tested with sample SRE prompts like 'analyze this alert log' without external APIs.",
+  "success_metric": "Processes 100+ SRE prompts daily in a test environment with zero vendor API calls (verified via logs), 90% user satisfaction on response quality/usefulness (internal survey), and full audit trail generation for 100% of interactions.",
+  "repo_structure": {
+    "folders": [
+      "app/",
+      "app/api/",
+      "app/core/",
+      "app/models/",
+      "tests/",
+      "docker/"
+    ],
+    "key_files": [
+      "app/main.py",
+      "app/api/router.py",
+      "app/core/ollama_client.py",
+      "app/models/prompt.py",
+      "cli_client.py",
+      "Dockerfile",
+      "requirements.txt",
+      "README.md",
+      "tests/test_proxy.py"
+    ]
+  },
+  "source_problem": "Vendor Legal Restrictions Limiting AI Usage in Production Environments"
+}

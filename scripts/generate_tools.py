@@ -64,12 +64,13 @@ def get_perplexity_response(prompt):
 
 def generate_tool_idea(problem):
     """Generate a tool idea for a single problem"""
-    log(f"💡 Generating tool for: {problem['title']}")
+    problem_title = problem.get('problem_title') or problem.get('title', 'Unknown')
+    log(f"💡 Generating tool for: {problem_title}")
 
     prompt = f"""
 Given this SRE problem from the community:
 
-**Problem**: {problem['title']}
+**Problem**: {problem_title}
 **Description**: {problem.get('description', '')}
 **Severity**: {problem.get('severity', 'MEDIUM')}
 
@@ -106,7 +107,7 @@ Return as JSON with keys:
             json_str = response
 
         tool = json.loads(json_str)
-        tool['source_problem'] = problem['title']
+        tool['source_problem'] = problem.get('problem_title') or problem.get('title', 'Unknown')
         return tool
     except json.JSONDecodeError:
         log(f"⚠️  Could not parse tool JSON: {response[:200]}")

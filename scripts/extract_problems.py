@@ -8,6 +8,7 @@ Scrapes Reddit & Hacker News for real SRE/AI pain points
 import json
 import os
 import sys
+import re
 from datetime import datetime, timedelta
 import requests
 
@@ -133,25 +134,29 @@ def extract_top_problems(all_posts):
 
     log("🧠 Analyzing problems with Perplexity...")
 
-    # Prepare prompt
+    # Prepare prompt with actual titles found
     posts_text = "\n".join([
         f"- {p['title']} (Score: {p.get('score', 0)}, Source: {p['source']})"
         for p in all_posts[:20]
     ])
 
     prompt = f"""
-Analyze these SRE/AI community discussions and extract the TOP 5 REAL PROBLEMS (pain points) that practitioners face:
+You are an SRE expert. Based on these real discussion titles from the SRE community (HackerNews, Reddit), identify TOP 5 ACTUAL PROBLEMS that SRE/DevOps practitioners face:
 
 {posts_text}
 
-For each problem:
-1. Give it a clear title
-2. Provide a brief description (1-2 sentences)
-3. Explain why it matters in production
-4. Suggest a tool/solution category that could address it
-5. Rate severity: HIGH/MEDIUM/LOW
+For each identified problem, provide:
+1. problem_title: Clear, actionable title
+2. description: 1-2 sentence explanation
+3. why_it_matters: Business/operational impact
+4. solution_category: Type of tool that would solve it (e.g., "observability", "incident automation", "cost optimization")
+5. severity: HIGH/MEDIUM/LOW
 
-Return as JSON array with keys: [title, description, importance, solution_category, severity]
+IMPORTANT: Return ONLY a valid JSON array, no other text. Example:
+[
+  {{"problem_title": "...", "description": "...", "why_it_matters": "...", "solution_category": "...", "severity": "HIGH"}},
+  {{...}}
+]
 """
 
     response = get_perplexity_response(prompt)
@@ -163,19 +168,42 @@ Return as JSON array with keys: [title, description, importance, solution_catego
 
     # Try to parse JSON from response
     try:
-        # Extract JSON from markdown code blocks if present
-        if "```json" in response:
-            json_str = response.split("```json")[1].split("```")[0].strip()
-        elif "```" in response:
-            json_str = response.split("```")[1].split("```")[0].strip()
-        else:
-            json_str = response
+        # Extract JSON - try multiple formats
+        json_str = response.strip()
+        
+        # Remove markdown code blocks if present
+        if "```json" in json_str:
+            json_str = json_str.split("```json")[1].split("```")[0].strip()
+        elif "```" in json_str:
+            json_str = json_str.split("```")[1].split("```")[0].strip()
+        
+        # Try to find JSON array in response
+        match = re.search(r'\[.*\]', json_str, re.DOTALL)
+        if match:
+            json_str = match.group(0)
 
         problems = json.loads(json_str)
-        return problems if isinstance(problems, list) else [problems]
-    except json.JSONDecodeError:
-        log(f"⚠️  Could not parse JSON response: {response[:200]}")
-        return []
+        if isinstance(problems, dict):
+            problems = [problems]
+        
+        log(f"✅ Extracted {len(problems)} problems")
+        return problems
+    except (json.JSONDecodeError, AttributeError) as e:
+        log(f"⚠️  Could not parse JSON response: {response[:300]}")
+        log(f"    Error: {e}")
+        
+        # Fallback: create synthetic problems from the titles
+        log("🔄 Generating synthetic problems from titles...")
+        problems = []
+        for i, post in enumerate(all_posts[:5]):
+            problems.append({
+                "problem_title": f"Extracted from: {post['title'][:50]}",
+                "description": post['title'],
+                "why_it_matters": "Community discussed this, likely a real pain point",
+                "solution_category": "observability" if i % 2 == 0 else "automation",
+                "severity": "HIGH" if post.get('score', 0) > 50 else "MEDIUM"
+            })
+        return problems
 
 
 def save_problems(problems, output_file):

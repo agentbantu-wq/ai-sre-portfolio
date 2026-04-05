@@ -1,0 +1,39 @@
+{
+  "tool_name": "VendorLeakGuard",
+  "description": "A minimal CLI tool that scans SRE testing infrastructures for exposure to known third-party vendor data leaks (e.g., BrowserStack breaches) by checking credentials, monitoring leak databases, and alerting on compromised services.",
+  "core_features": [
+    "Scans local config files and env vars for vendor credentials (BrowserStack AWS keys, API tokens)",
+    "Queries public breach databases for vendor incidents matching your email/domains",
+    "Generates risk reports with remediation steps for detected exposures",
+    "CLI alerts for HIGH severity leaks affecting testing infrastructure"
+  ],
+  "tech_stack": {
+    "language": "Python",
+    "frameworks": [
+      "Click (CLI)",
+      "requests",
+      "python-dotenv",
+      "rich (output)"
+    ]
+  },
+  "mvp_scope": "3-day build: 1) CLI scanner for BrowserStack-specific leaks (AWS keys, emails from 2014 breach patterns), 2) Check against HaveIBeenPwned API for user emails, 3) Simple terminal report with PASS/FAIL/WARN status, 4) Config file support (~200 LOC). No DB, no scheduling.",
+  "success_metric": "Detects 100% of planted BrowserStack AWS credentials in test configs AND flags emails from known breach datasets within 5s execution time (measured via pytest).",
+  "repo_structure": {
+    "folders": [
+      "vendorleakguard",
+      "tests",
+      "docs",
+      "examples"
+    ],
+    "key_files": [
+      "pyproject.toml",
+      "README.md",
+      "vendorleakguard/__main__.py",
+      "vendorleakguard/scanner.py",
+      "vendorleakguard/browserstack.py",
+      "tests/test_scanner.py",
+      "examples/config.yaml"
+    ]
+  },
+  "source_problem": "Critical Security Breaches from Vendor Data Leaks"
+}
