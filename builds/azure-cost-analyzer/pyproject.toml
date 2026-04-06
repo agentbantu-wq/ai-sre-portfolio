@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-cost-analyzer"
+version = "1.0.0"
+description = "Advanced Azure cost tracking, analysis and optimization tool"
+authors = [{name = "AI/SRE Portfolio"}]
+dependencies = [
+    "azure-identity==1.15.0",
+    "azure-costmanagement==6.0.0",
+    "azure-mgmt-billing==6.17.0",
+    "azure-storage-blob==12.19.0",
+    "pandas==2.1.4",
+    "matplotlib==3.8.2",
+    "seaborn==0.13.0",
+    "plotly==5.17.0",
+    "rich==13.7.0",
+    "click==8.1.7",
+    "python-dotenv==1.0.0",
+    "requests==2.31.0",
+    "openpyxl==3.1.2",
+    "numpy==1.26.4"
+]
+requires-python = ">=3.8"
+
+[project.scripts]
+azure-cost-analyzer = "azure_cost_analyzer.cli:cli"
+
+[tool.setuptools.packages.find]
+where = ["."]
