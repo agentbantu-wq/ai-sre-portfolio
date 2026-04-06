@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ssl-expiry-checker"
+version = "1.0.0"
+description = "Advanced SSL certificate expiry checker with monitoring and alerting"
+authors = [{name = "AI/SRE Portfolio"}]
+dependencies = [
+    "requests==2.31.0",
+    "cryptography==41.0.7",
+    "schedule==1.2.0",
+    "python-dotenv==1.0.0",
+    "rich==13.7.0",
+    "click==8.1.7",
+    "pandas==2.1.4",
+    "openpyxl==3.1.2"
+]
+requires-python = ">=3.8"
+
+[project.scripts]
+ssl-check = "ssl_expiry_checker.cli:cli"
+
+[tool.setuptools.packages.find]
+where = ["."]
