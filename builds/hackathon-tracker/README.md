@@ -1,6 +1,8 @@
-# Hackathon Opportunity Tracker
+# Hackathon Opportunity Tracker - Browser Edition
 
 A comprehensive tool for discovering, analyzing, and ranking hackathon opportunities across multiple sources to maximize your earning potential and participation rewards.
+
+**🚀 NEW: Uses headless browser with your cookies instead of Reddit API - no API keys needed!**
 
 ## 🎯 Problem Statement
 
