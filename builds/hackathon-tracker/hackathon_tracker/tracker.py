@@ -136,10 +136,21 @@ class HackathonTracker:
             options.add_argument('--disable-extensions')
             options.add_argument('--disable-plugins')
             options.add_argument('--disable-images')  # Speed up loading
-            options.add_argument('--disable-javascript')  # We don't need JS for scraping
+            # options.add_argument('--disable-javascript')  # We DO need JS for Reddit
             options.add_argument('--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36')
 
             service = Service(ChromeDriverManager().install())
+            # Fix for webdriver-manager returning wrong path
+            chromedriver_path = service.path
+            if 'THIRD_PARTY_NOTICES' in chromedriver_path:
+                # Find the actual chromedriver executable
+                import glob
+                chromedriver_dir = os.path.dirname(os.path.dirname(chromedriver_path))
+                actual_driver = glob.glob(os.path.join(chromedriver_dir, '**', 'chromedriver'), recursive=True)
+                if actual_driver:
+                    chromedriver_path = actual_driver[0]
+                    service = Service(chromedriver_path)
+
             self.driver = webdriver.Chrome(service=service, options=options)
 
             # Execute script to remove webdriver property
